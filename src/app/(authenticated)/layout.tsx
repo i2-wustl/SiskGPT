@@ -1,5 +1,5 @@
 import { AuthenticatedProviders } from "@/features/globals/providers";
-import { MainMenu } from "@/features/main-menu/main-menu";
+import { MainMenu } from "@/features/main-menu/custom-main-menu";
 import { AI_NAME } from "@/features/theme/theme-config";
 import { cn } from "@/ui/lib";
 
