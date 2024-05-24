@@ -1,5 +1,5 @@
 "use client";
-import { ChatInput } from "@/features/chat-page/chat-input/chat-input";
+import { ChatInput } from "@/features/chat-page/chat-input/custom-chat-input";
 import { chatStore, useChat } from "@/features/chat-page/chat-store";
 import { ChatLoading } from "@/features/ui/chat/chat-message-area/chat-loading";
 import { ChatMessageArea } from "@/features/ui/chat/chat-message-area/chat-message-area";
@@ -9,7 +9,7 @@ import { useChatScrollAnchor } from "@/features/ui/chat/chat-message-area/use-ch
 import { useSession } from "next-auth/react";
 import { FC, useEffect, useRef } from "react";
 import { ExtensionModel } from "../extensions-page/extension-services/models";
-import { ChatHeader } from "./chat-header/chat-header";
+import { ChatHeader } from "./chat-header/custom-chat-header";
 import {
   ChatDocumentModel,
   ChatMessageModel,
