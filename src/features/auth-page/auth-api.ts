@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import { Provider } from "next-auth/providers/index";
 import { hashValue } from "./helpers";
-
+import { redcapCredentialsProvider } from "./redcap-auth";
 const configureIdentityProvider = () => {
   const providers: Array<Provider> = [];
 
@@ -51,6 +51,13 @@ const configureIdentityProvider = () => {
         },
       })
     );
+  }
+
+  if (
+    process.env.REDCAP_API_URL != null &&
+    process.env.REDCAP_API_KEY != null
+  ) {
+    providers.push(redcapCredentialsProvider);
   }
 
   // If we're in local dev, add a basic credential provider option as well
