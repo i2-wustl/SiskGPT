@@ -1,5 +1,5 @@
 import { redirectIfAuthenticated } from "@/features/auth-page/helpers";
-import { LogIn } from "@/features/auth-page/login";
+import { LogIn } from "@/features/auth-page/custom-login";
 
 export default async function Home() {
   await redirectIfAuthenticated();
