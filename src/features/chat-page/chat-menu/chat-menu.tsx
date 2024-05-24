@@ -6,7 +6,7 @@ import {
   MenuItemsGroupName,
 } from "../chat-services/models";
 import { ChatGroup } from "./chat-group";
-import { ChatMenuItem } from "./chat-menu-item";
+import { ChatMenuItem } from "./custom-chat-menu-item";
 
 interface ChatMenuProps {
   menuItems: Array<ChatThreadModel>;
