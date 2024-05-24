@@ -4,6 +4,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import { Provider } from "next-auth/providers/index";
 import { hashValue } from "./helpers";
+import https from "https";
+import querystring from "querystring";
 
 const configureIdentityProvider = () => {
   const providers: Array<Provider> = [];
@@ -58,52 +60,69 @@ const configureIdentityProvider = () => {
       CredentialsProvider({
         name: "redcap",
         credentials: {
-          username: { label: "Username", type: "text", placeholder: "dev" },
+          username: { label: "Username", type: "text", placeholder: "username" },
           password: { label: "Password", type: "password" },
         },
-        async authorize(credentials, req): Promise<any> {
+        async authorize(credentials, req1): Promise<any> {
           console.log('using redcap....');
           if (!credentials?.password || !credentials?.username) return false;
 
-          const baseUrl = "https://redcap.wustl.edu/redcap/api";
-            // process.env.REDCAP_API_URL ??
-            // "https://redcapdev.wustl.edu/redcap/api/";
+          const host = process.env.REDCAP_API_URL ?? "redcapdev.wustl.edu";
 
           const queryString =
-            `?token=${process.env.REDCAP_API_KEY}&content=record&action=export&format=json&type=flat&fields[0]=creds_user&fields[1]=creds_pass&fields[2]=creds_enabled` +
-            `&rawOrLabel=raw&rawOrLabelHeaders=raw&exportCheckboxLabel=false&exportSurveyFields=false&exportDataAccessGroups=false&returnFormat=json`;
-            // + `&filterLogic=[creds_user]='${credentials?.username}' AND [creds_pass] = '${credentials?.password}' AND [creds_enabled] = 1`;
+            `token=${process.env.REDCAP_API_KEY}&content=record&action=export&format=json&type=flat&fields[0]=creds_user&fields[1]=creds_pass&fields[2]=creds_enabled` +
+            `&rawOrLabel=raw&rawOrLabelHeaders=raw&exportCheckboxLabel=false&exportSurveyFields=false&exportDataAccessGroups=false&returnFormat=json`
+             + `&filterLogic=[creds_user]='${credentials?.username}' AND [creds_pass] = '${credentials?.password}' AND [creds_enabled] = 1`;
 
-          const res = await fetch({
-            url: baseUrl + queryString,
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-              "Accept": "application/json",
-            },
-          });
+             const options = {
+               hostname: host,
+               port: 443,
+               path: "/redcap/api/",
+               method: "POST",
+               headers: {
+                 "Content-Type": "application/x-www-form-urlencoded",
+                 Accept: "application/json",
+                 "Content-Length": Buffer.byteLength(queryString),
+               },
+             };
+          
+             const apiRequest = https.request(options, async (res) => {
+               let body = "";
 
-          if (res.ok) {
+               res.on("data", (chunk) => {
+                 body += chunk;
+               });
 
-            //TODO: check for RC error in JSON object
-            //{"creds_user":"test","creds_pass":"test","creds_enabled":"1"}
-            const data = await res.json();
-            
-            console.log('data:', data);
-            if (data.length == 1) {
-              return {
-                id: hashValue(data[0].creds_user),
-                name: data[0].creds_user,
-                email: data[0].creds_user,
-                isAdmin: false,
-                image: "",
-              };
-            }
-          }else{
-            console.log('bad response', res);
-            
-          }
-          return false;
+               res.on("end", async () => {
+                 if (res.statusCode != undefined && res.statusCode >= 200 && res.statusCode < 300) {
+                   const data = JSON.parse(body);
+                   console.log("data:", data);
+                   if (data.length == 1) {
+                     const user = {
+                       id: hashValue(data[0].creds_user + "@redcap"),
+                       name: data[0].creds_user,
+                       email: data[0].creds_user + "@redcap",
+                       isAdmin: false,
+                       image: "",
+                     };
+
+                     console.log(user);
+                     return user;
+                     
+                   }
+                 } else {
+                   console.log("bad response", res.statusCode, res);
+                 }
+                 return false;
+               });
+             });
+
+             apiRequest.on("error", (error) => {
+               console.error(error);
+             });
+
+             apiRequest.write(queryString);
+             apiRequest.end();
         },
       })
     );
