@@ -53,11 +53,12 @@ const configureIdentityProvider = () => {
     );
   }
 
- if (process.env.REDCAP_API_URL != null) {
-   providers.push(
-     redcapCredentialsProvider
-   );
- }
+  if (
+    process.env.REDCAP_API_URL != null &&
+    process.env.REDCAP_API_KEY != null
+  ) {
+    providers.push(redcapCredentialsProvider);
+  }
 
   // If we're in local dev, add a basic credential provider option as well
   // (Useful when a dev doesn't have access to create app registration in their tenant)
