@@ -24,7 +24,7 @@ export const LogIn: FC<LoginProps> = (props) => {
           <Avatar className="h-8 w-8">
             <AvatarImage src={"ai-icon.png"} />
           </Avatar>
-          <span className="text-primary">{AI_NAME}</span>
+          <span className="text-primary">Pediatric Chat Bot</span>
         </CardTitle>
         <CardDescription>
           Login in with the username and password you have been provided
