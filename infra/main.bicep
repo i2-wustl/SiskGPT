@@ -32,7 +32,7 @@ param embeddingModelName string = 'text-embedding-ada-002'
 
 // DALL-E v3 only supported in Sweden Central for now
 @description('Location for the OpenAI DALL-E 3 instance resource group')
-@allowed(['swedencentral'])
+@allowed(['eastus'])
 param dalleLocation string
 
 param dalleDeploymentCapacity int = 1
