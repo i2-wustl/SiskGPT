@@ -4,7 +4,7 @@ name: Update Web App
 on:
   # Automatically trigger it when detected changes in repo
   push:
-    branches: [main]
+    branches: [update]
 
   # Allow manual workflow trigger
   workflow_dispatch:
