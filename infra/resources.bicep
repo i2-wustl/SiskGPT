@@ -237,6 +237,10 @@ resource webApp 'Microsoft.Web/sites@2020-06-01' = {
           name: 'AZURE_STORAGE_ACCOUNT_KEY'
           value: '@Microsoft.KeyVault(VaultName=${kv.name};SecretName=${kv::AZURE_STORAGE_ACCOUNT_KEY.name})'
         }
+         {
+          name: 'SCM_DO_BUILD_DURING_DEPLOYMENT'
+          value: 'false'
+        }
       ]
     }
   }
