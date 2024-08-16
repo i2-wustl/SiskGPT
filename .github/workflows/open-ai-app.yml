@@ -72,12 +72,10 @@ jobs:
         with:
           name: Nextjs-site
 
-      - name: 🗝️ Login to Azure
-        uses: azure/login@v2
+      - name: 🗝️ Azure Login
+        uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_CDFA5A5D6EA34202A693EAB4ABB7CE9C }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_AC7E6EF54F844C279CE5952ED35D00B3 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_984B47D2670C4FDEBEAE2B088B9BA14C }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # Set the build during deployment setting to false. This setting was added in the templates to all azd to work, but breaks deployment via webapps-deploy
       - name: Azure CLI script
