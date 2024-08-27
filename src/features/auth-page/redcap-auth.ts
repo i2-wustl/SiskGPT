@@ -9,17 +9,16 @@ import querystring from "querystring";
 // #REDCap Login config
 // REDCAP_API_KEY={your token}
 // REDCAP_API_URL=redcap.wustl.edu
-// REDCAP_USER_FIELD="creds_user"
+// REDCAP_EMAIL_FIELD="creds_email"
 // REDCAP_PASS_FIELD="creds_pass"
 // REDCAP_ENABLED_FIELD="creds_enabled"
 // REDCAP_ADMIN_FIELD="creds_is_admin"
-// REDCAP_EMAIL_FIELD="demo_email"
 // REDCAP_NAME_FIELD="demo_name"
 
 const redcapCredentialsProvider = CredentialsProvider({
   name: "redcap",
   credentials: {
-    username: { label: "Username", type: "text", placeholder: "dev" },
+    username: { label: "Email Address", type: "text", placeholder: "Email Address" },
     password: { label: "Password", type: "password" },
   },
   async authorize(credentials): Promise<any> {
@@ -27,11 +26,10 @@ const redcapCredentialsProvider = CredentialsProvider({
     if (!credentials?.password || !credentials?.username) return false;
 
     const host = process.env.REDCAP_API_URL ?? "redcapdev.wustl.edu";
-    const usernameField = process.env.REDCAP_USER_FIELD ?? "creds_user";
     const passwordField = process.env.REDCAP_PASS_FIELD ?? "creds_pass";
     const enabledField = process.env.REDCAP_ENABLED_FIELD ?? "creds_enabled";
-    const emailField = process.env.REDCAP_EMAIL_FIELD ?? "creds_user";
-    const nameField = process.env.REDCAP_NAME_FIELD ?? "creds_user";
+    const emailField = process.env.REDCAP_EMAIL_FIELD ?? "creds_email";
+    const nameField = process.env.REDCAP_NAME_FIELD ?? "creds_email";
     const isAdminField = process.env.REDCAP_ADMIN_FIELD ?? "creds_is_admin";
 
     const formData = {
@@ -41,13 +39,12 @@ const redcapCredentialsProvider = CredentialsProvider({
       format: "json",
       type: "flat",
       //NOTE: REDCap uses a non-standard way to handle arrays in form data.
-      // We cannot use a typical array like =>  fields: ["creds_user", "creds_enabled"],
+      // We cannot use a typical array like =>  fields: ["creds_email", "creds_enabled"],
       // Instead we need to define the array like this:
-      "fields[0]": usernameField,
+      "fields[0]": emailField,
       "fields[1]": enabledField,
-      "fields[2]": emailField,
-      "fields[3]": nameField,
-      "fields[4]": isAdminField,
+      "fields[2]": nameField,
+      "fields[3]": isAdminField,
       rawOrLabel: "raw",
       rawOrLabelHeaders: "raw",
       exportCheckboxLabel: "false",
@@ -55,7 +52,7 @@ const redcapCredentialsProvider = CredentialsProvider({
       exportDataAccessGroups: "false",
       returnFormat: "json",
       filterLogic:
-        `[${usernameField}]='${credentials?.username}'` +
+        `[${emailField}]='${credentials?.username}'` +
         ` AND [${passwordField}] = '${credentials?.password}'` +
         ` AND [${enabledField}] = 1`,
     };
@@ -91,9 +88,6 @@ const redcapCredentialsProvider = CredentialsProvider({
             if (data.length == 1) {
               
               let email = data[0][emailField].toString();
-              if(email == null) email = data[0][usernameField];
-              if (!email?.includes("@")) email += "@redcap";
-
               let isAdmin = false;
               if (data[0][isAdminField] == true) isAdmin = true;
 

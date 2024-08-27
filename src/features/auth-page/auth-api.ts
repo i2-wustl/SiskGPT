@@ -115,6 +115,7 @@ export const options: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60 * 1.5 //Token timeout set to 1.5 hours
   },
 };
 

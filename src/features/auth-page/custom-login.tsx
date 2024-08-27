@@ -27,7 +27,7 @@ export const LogIn: FC<LoginProps> = (props) => {
           <span className="text-primary">Pediatric Chat Bot</span>
         </CardTitle>
         <CardDescription>
-          Login in with the username and password you have been provided
+          Login in with your email and the password you have been provided
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
